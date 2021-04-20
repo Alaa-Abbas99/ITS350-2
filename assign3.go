@@ -1,3 +1,5 @@
+// Salih Saad ss17039@auis.edu.krd
+// Alaa basim ab17177@auis.edu.krd
 package main
 
 import (
@@ -5,6 +7,7 @@ import (
 	"strings"
 )
 
+var keys [26]*object
 var n int
 var head *object
 
@@ -17,6 +20,8 @@ func main() {
 	fmt.Println("Hello, playground")
 	getnames()
 	print()
+	hashTable()
+	printHash()
 }
 
 func getnames() {
@@ -60,6 +65,7 @@ func print() {
 func hash(n *object) int {
 	//https://stackoverflow.com/questions/18130859/how-can-i-iterate-over-a-string-by-runes-in-go
 	name := strings.ToUpper(n.name)
+	println(name)
 	key := 0
 	for index, char := range name {
 		if index == len(name)-2 { // if it is the last-second character
@@ -69,5 +75,28 @@ func hash(n *object) int {
 		}
 
 	}
-	return key - 101 // because A = 101
+	return key - 65 // because A = 65
+}
+
+func hashTable() {
+	c := head
+
+	for c != nil {
+		k := hash(c)
+		nextObject := c.next // get the next object
+		c.next = keys[k]     // will point at nothing in the first iteration , point at the previous object in other iteration
+		keys[k] = c          // let the key point at the last in object
+		c = nextObject       // iterate to the next object
+	}
+
+}
+
+func printHash() {
+	for i := 0; i < 26; i++ {
+		c := keys[i]
+		for c != nil {
+			fmt.Println(c.name)
+			c = c.next
+		}
+	}
 }
