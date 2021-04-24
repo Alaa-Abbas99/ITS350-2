@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-var keys [26]*object
+var keys [676]*object
 var n int
 var head *object
 
@@ -17,11 +17,11 @@ type object struct {
 }
 
 func main() {
-	fmt.Println("Hello, playground")
 	getnames()
-	print()
+	//print() to test the linked list insertion
 	hashTable()
-	printHash()
+	deleteHashByValue()
+	printHash() // to test the deletion
 }
 
 func getnames() {
@@ -65,17 +65,22 @@ func print() {
 func hash(n *object) int {
 	//https://stackoverflow.com/questions/18130859/how-can-i-iterate-over-a-string-by-runes-in-go
 	name := strings.ToUpper(n.name)
-	println(name)
 	key := 0
 	for index, char := range name {
-		if index == len(name)-2 { // if it is the last-second character
-			println(char, index)
-			key = int(char) // convert to asci code
-			break
+		value := int(char) - 65                           // convert to asci code starting from index 0, For example, a=0 , z=25
+		if index == len(name)-2 || index == len(name)-1 { // if it is the last-second character or the last character
+			if index == len(name)-2 {
+				key = value * 26 // let a start from 0 to 25 and b from 26 to 51 and c from 52 to 77 and so on....
+			} else {
+				key += value // add the second letter value to the initial value, for example, if the last second letter is b and last letter is z then key = 1 *26 + 25 = 51
+				//                                             Another Example, if the last second letter is a and the last letter is y then key = 0*26 + 24 = 24
+
+				// This was done so 'az' would be before 'ba' because if we added their asci code value, ba would be before so we did it this way.
+			}
 		}
 
 	}
-	return key - 65 // because A = 65
+	return key
 }
 
 func hashTable() {
@@ -92,11 +97,25 @@ func hashTable() {
 }
 
 func printHash() {
-	for i := 0; i < 26; i++ {
+	for i := 0; i < 676; i++ {
 		c := keys[i]
 		for c != nil {
 			fmt.Println(c.name)
 			c = c.next
 		}
+	}
+}
+
+func deleteHashByValue() {
+	z := int('Z') - 65 // get the value of z asci code where a = 0
+	z = z * 26         // let each letter have 26 keys and distinguish them by the last letter
+	r := int('R') - 65 // get the value of r asci code where a = 0
+	r = r * 26
+	for i := z; i < z+26; i++ {
+		keys[i] = nil
+
+	}
+	for i := r; i < r+26; i++ {
+		keys[i] = nil
 	}
 }
